@@ -1,0 +1,19 @@
+version : 0.2
+phases:
+  pre_build:
+    -.\gradlew clean build
+    -echo logging into AWS ecr
+    -aws --version
+    -REPO_URI = 783016426624.dkr.ecr.eu-north-1.amazonaws.com/awsde/aws-ecs
+    -aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin $REPO_URI
+    -IMAGE_TAG = build-$(echo CODEBUILD_BUILD_ID | awk -F ":" {print $2})
+    -echo authentication successful
+  build:
+    -echo started building image on `date`
+    -docker build -t $REPO_URI:latest .
+    -docker tag $REPO_URI:latest $REPO_URI:$IMAGE_TAG
+    -echo completed creating image for employee-service
+  post_build:
+    -echo started pushing the images on `date`
+    -docker push $REPO_URI:latest
+    -docker push $REPO_URI:$IMAGE_TAG
