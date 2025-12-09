@@ -2,7 +2,7 @@ version : 0.2
 phases:
   pre_build:
     commands:
-      -.\gradlew clean build
+      -./gradlew clean build
       -echo logging into AWS ecr
       -aws --version
       -REPO_URI = 783016426624.dkr.ecr.eu-north-1.amazonaws.com/awsde/aws-ecs
